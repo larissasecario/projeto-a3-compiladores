@@ -297,11 +297,10 @@ public class SnipPyParser {
 
         switch (tokenAtual.getTipo()) {
 
-            case PAREN_ESQ: {
-                casaToken(TipoToken.PAREN_ESQ);
-                ExprNode expr = expressao();
-                casaToken(TipoToken.PAREN_DIR);
-                return expr;
+            case OP_SUB: {  // <-- ADICIONADO AQUI
+                casaToken(TipoToken.OP_SUB);
+                ExprNode expr = fator();
+                return new UnaryExprNode("-", expr);
             }
 
             case OP_NOT: {
@@ -310,49 +309,47 @@ public class SnipPyParser {
                 return new UnaryExprNode("not", expr);
             }
 
-            case IDENTIFICADOR: {
+            case PAREN_ESQ: {
+                casaToken(TipoToken.PAREN_ESQ);
+                ExprNode expr = expressao();
+                casaToken(TipoToken.PAREN_DIR);
+                return expr;
+            }
+
+            case IDENTIFICADOR:
                 String nome = tokenAtual.getLexema();
                 casaToken(TipoToken.IDENTIFICADOR);
                 return new VarExprNode(nome);
-            }
 
-            case INTEIRO: {
+            case INTEIRO:
                 int valor = Integer.parseInt(tokenAtual.getLexema());
                 casaToken(TipoToken.INTEIRO);
                 return new IntLiteralNode(valor);
-            }
 
-            case REAL: {
-                double valor = Double.parseDouble(tokenAtual.getLexema());
+            case REAL:
+                double valorR = Double.parseDouble(tokenAtual.getLexema());
                 casaToken(TipoToken.REAL);
-                return new RealLiteralNode(valor);
-            }
+                return new RealLiteralNode(valorR);
 
-            case STRING: {
-                String valor = tokenAtual.getLexema(); // já vem sem aspas do léxico
+            case STRING:
+                String valorS = tokenAtual.getLexema();
                 casaToken(TipoToken.STRING);
-                return new StringLiteralExprNode(valor);
-            }
+                return new StringLiteralExprNode(valorS);
 
-            case KW_TRUE: {
+            case KW_TRUE:
                 casaToken(TipoToken.KW_TRUE);
                 return new BoolLiteralNode(true);
-            }
 
-            case KW_FALSE: {
+            case KW_FALSE:
                 casaToken(TipoToken.KW_FALSE);
                 return new BoolLiteralNode(false);
-            }
 
             default:
                 erroSintatico("Fator inesperado: " + tokenAtual.getTipo());
-                return null; // nunca chega aqui
+                return null;
         }
     }
 
-    // ============================
-    //  CONDICIONAL (if / else)
-    // ============================
 
     private IfNode condicional() {
 
@@ -380,9 +377,6 @@ public class SnipPyParser {
         return new IfNode(cond, blocoThen, blocoElse);
     }
 
-    // ============================
-    //  REPETIÇÃO (while / for)
-    // ============================
 
     private StmtNode repeticao() {
 
@@ -454,9 +448,6 @@ public class SnipPyParser {
         return new ForNode(init, cond, inc, corpo);
     }
 
-    // ============================
-    //  ENTRADA / SAÍDA (read / print)
-    // ============================
 
     private StmtNode entradaSaida() {
 
@@ -498,7 +489,6 @@ public class SnipPyParser {
         return null;
     }
 
-    // opcional, se quiser inspecionar de fora
     public Token getTokenAtual() {
         return tokenAtual;
     }

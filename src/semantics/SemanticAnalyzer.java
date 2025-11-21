@@ -13,6 +13,10 @@ public class SemanticAnalyzer implements NodeVisitor {
     private void erro(String msg) {
         throw new SemanticError(msg);
     }
+    
+    public TabelaSimbolos getTabela() {
+        return tabela;
+    }
 
     //  PROGRAMA
     @Override
@@ -189,6 +193,11 @@ public class SemanticAnalyzer implements NodeVisitor {
                 if (tipoExpr != TipoDado.BOOL)
                     erro("Operador 'not' requer BOOL.");
                 return TipoDado.BOOL;
+
+            case "-":  // <-- ADICIONADO
+                if (tipoExpr != TipoDado.INT && tipoExpr != TipoDado.REAL)
+                    erro("Operador '-' unário requer INT ou REAL.");
+                return tipoExpr;
 
             default:
                 erro("Operador unário inválido: " + node.getOperador());

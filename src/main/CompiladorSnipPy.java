@@ -63,7 +63,7 @@ public class CompiladorSnipPy {
             // -------------------------
             // 4. GERADOR DE C
             // -------------------------
-            CodeGeneratorC gen = new CodeGeneratorC();
+            CodeGeneratorC gen = new CodeGeneratorC(sem.getTabela());
             String codigoC = gen.gerarCodigo(ast);
 
             System.out.println(" ------ CODIGO C GERADO ------ ");

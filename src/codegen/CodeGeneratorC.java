@@ -2,7 +2,7 @@ package codegen;
 
 import ast.*;
 import semantics.TipoDado;
-
+import semantics.TabelaSimbolos;
 /**
  *
  * @author laris
@@ -11,7 +11,12 @@ public class CodeGeneratorC implements CodeGenVisitor {
 
     private StringBuilder sb = new StringBuilder();
     private int indent = 0;
-
+    private TabelaSimbolos tabela;
+    
+     public CodeGeneratorC(TabelaSimbolos tabela) {
+        this.tabela = tabela;
+    }
+    
     private void appendLine(String line) {
         sb.append("    ".repeat(indent)).append(line).append("\n");
     }
@@ -52,9 +57,6 @@ public class CodeGeneratorC implements CodeGenVisitor {
         throw new RuntimeException("Expressão desconhecida: " + node.getClass());
     }
 
-    // =============================
-    // PROGRAM
-    // =============================
 
     @Override
     public void visit(ProgramNode node) {
@@ -73,10 +75,47 @@ public class CodeGeneratorC implements CodeGenVisitor {
         else if (s instanceof PrintNode) visit((PrintNode) s);
         else throw new RuntimeException("Nó desconhecido no codegen: " + s.getClass());
     }
+    
+    private TipoDado tipoExpr(ExprNode node) {
+        if (node instanceof IntLiteralNode) return TipoDado.INT;
+        if (node instanceof RealLiteralNode) return TipoDado.REAL;
+        if (node instanceof BoolLiteralNode) return TipoDado.BOOL;
+        if (node instanceof StringLiteralExprNode) return TipoDado.STRING;
 
-    // =============================
-    // DECLARAÇÃO
-    // =============================
+        if (node instanceof VarExprNode) {
+            return this.tabela.buscar(((VarExprNode) node).getNome()).getTipo();
+        }
+
+        if (node instanceof UnaryExprNode) {
+            UnaryExprNode u = (UnaryExprNode) node;
+            if (u.getOperador().equals("-"))
+                return tipoExpr(u.getExpr());
+            if (u.getOperador().equals("not"))
+                return TipoDado.BOOL;
+        }
+
+        if (node instanceof BinaryExprNode) {
+            BinaryExprNode b = (BinaryExprNode) node;
+
+            // operadores lógicos
+            if (b.getOperador().equals("and") || b.getOperador().equals("or"))
+                return TipoDado.BOOL;
+
+            // operadores relacionais
+            if (b.getOperador().matches("==|!=|<|<=|>|>="))
+                return TipoDado.BOOL;
+
+            // operadores aritméticos
+            TipoDado t1 = tipoExpr(b.getEsquerda());
+            TipoDado t2 = tipoExpr(b.getDireita());
+            if (t1 == TipoDado.REAL || t2 == TipoDado.REAL)
+                return TipoDado.REAL;
+            return TipoDado.INT;
+        }
+
+        return TipoDado.INVALIDO;
+    }
+
 
     @Override
     public void visit(VarDeclNode node) {
@@ -100,19 +139,12 @@ public class CodeGeneratorC implements CodeGenVisitor {
         appendLine(line.toString());
     }
 
-    // =============================
-    // ATRIBUIÇÃO
-    // =============================
 
     @Override
     public void visit(AssignNode node) {
         String exprC = visit(node.getExpressao());
         appendLine(node.getNome() + " = " + exprC + ";");
     }
-
-    // =============================
-    // IF
-    // =============================
 
     @Override
     public void visit(IfNode node) {
@@ -131,9 +163,6 @@ public class CodeGeneratorC implements CodeGenVisitor {
         }
     }
 
-    // =============================
-    // WHILE
-    // =============================
 
     @Override
     public void visit(WhileNode node) {
@@ -145,9 +174,6 @@ public class CodeGeneratorC implements CodeGenVisitor {
         closeBlock();
     }
 
-    // =============================
-    // FOR
-    // =============================
 
     @Override
     public void visit(ForNode node) {
@@ -162,18 +188,12 @@ public class CodeGeneratorC implements CodeGenVisitor {
         closeBlock();
     }
 
-    // =============================
-    // READ
-    // =============================
 
     @Override
     public void visit(ReadNode node) {
         appendLine("scanf(\"%d\", &" + node.getNome() + ");");
     }
 
-    // =============================
-    // PRINT (CORRIGIDO)
-    // =============================
 
     @Override
     public void visit(PrintNode node) {
@@ -185,32 +205,28 @@ public class CodeGeneratorC implements CodeGenVisitor {
 
         ExprNode expr = node.getExpressao();
         String exprC = visit(expr);
+        TipoDado tipo = tipoExpr(expr);
 
-        // int
-        if (expr instanceof IntLiteralNode || expr instanceof VarExprNode) {
-            appendLine("printf(\"%d\\n\", " + exprC + ");");
-        }
-        // real
-        else if (expr instanceof RealLiteralNode) {
-            appendLine("printf(\"%f\\n\", " + exprC + ");");
-        }
-        // bool → true/false
-        else if (expr instanceof BoolLiteralNode) {
-            appendLine("printf(\"%s\\n\", (" + exprC + " ? \"true\" : \"false\"));");
-        }
-        // strings
-        else if (expr instanceof StringLiteralExprNode) {
-            appendLine("printf(\"%s\\n\", " + exprC + ");");
-        }
-        // fallback (expressões aritméticas que podem virar real)
-        else {
-            appendLine("printf(\"%f\\n\", " + exprC + ");");
+        switch (tipo) {
+
+            case INT:
+                appendLine("printf(\"%d\\n\", " + exprC + ");");
+                break;
+
+            case REAL:
+                appendLine("printf(\"%f\\n\", " + exprC + ");");
+                break;
+
+            case BOOL:
+                appendLine("printf(\"%s\\n\", (" + exprC + " ? \"true\" : \"false\"));");
+                break;
+
+            case STRING:
+                appendLine("printf(\"%s\\n\", " + exprC + ");");
+                break;
         }
     }
 
-    // =============================
-    // EXPRESSÕES
-    // =============================
 
     @Override
     public String visit(VarExprNode node) {
@@ -240,6 +256,8 @@ public class CodeGeneratorC implements CodeGenVisitor {
     @Override
     public String visit(UnaryExprNode node) {
         String expr = visit(node.getExpr());
+        if (node.getOperador().equals("-"))
+            return "(-" + expr + ")";
         return "(" + node.getOperador() + " " + expr + ")";
     }
 
@@ -257,4 +275,6 @@ public class CodeGeneratorC implements CodeGenVisitor {
 
         return "(" + left + " " + op + " " + right + ")";
     }
+    
+    
 }
