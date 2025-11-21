@@ -5,8 +5,6 @@ import ast.*;
  *
  * @author laris
  */
-
-
 public interface CodeGenVisitor {
 
     // STATEMENTS

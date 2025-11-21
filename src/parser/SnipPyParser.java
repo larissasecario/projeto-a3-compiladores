@@ -84,7 +84,8 @@ public class SnipPyParser {
         switch (tokenAtual.getTipo()) {
 
             case KW_INT:
-            case KW_REAL: {
+            case KW_REAL:
+            case KW_BOOL: {   // <-- ADICIONADO AQUI
                 VarDeclNode decl = declaracaoVariavel();
                 casaToken(TipoToken.PONTO_VIRGULA);
                 return decl;
@@ -130,12 +131,18 @@ public class SnipPyParser {
         if (tokenAtual.getTipo() == TipoToken.KW_INT) {
             casaToken(TipoToken.KW_INT);
             return TipoDado.INT;
-        } else if (tokenAtual.getTipo() == TipoToken.KW_REAL) {
+        } 
+        else if (tokenAtual.getTipo() == TipoToken.KW_REAL) {
             casaToken(TipoToken.KW_REAL);
             return TipoDado.REAL;
-        } else {
+        }
+        else if (tokenAtual.getTipo() == TipoToken.KW_BOOL) {
+            casaToken(TipoToken.KW_BOOL);
+            return TipoDado.BOOL;
+        }
+        else {
             erroSintatico(TipoToken.KW_INT, tokenAtual);
-            return TipoDado.INVALIDO; // nunca deve chegar aqui
+            return TipoDado.INVALIDO;
         }
     }
 

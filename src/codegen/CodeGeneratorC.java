@@ -1,10 +1,7 @@
 package codegen;
 
-
 import ast.*;
 import semantics.TipoDado;
-
-import java.util.List;
 
 /**
  *
@@ -39,10 +36,9 @@ public class CodeGeneratorC implements CodeGenVisitor {
         appendLine("return 0;");
         indent--;
         sb.append("}\n");
-
         return sb.toString();
     }
-    
+
     @Override
     public String visit(ExprNode node) {
         if (node instanceof VarExprNode) return visit((VarExprNode) node);
@@ -55,11 +51,10 @@ public class CodeGeneratorC implements CodeGenVisitor {
 
         throw new RuntimeException("Expressão desconhecida: " + node.getClass());
     }
-    
 
-    // =====================================
+    // =============================
     // PROGRAM
-    // =====================================
+    // =============================
 
     @Override
     public void visit(ProgramNode node) {
@@ -79,9 +74,9 @@ public class CodeGeneratorC implements CodeGenVisitor {
         else throw new RuntimeException("Nó desconhecido no codegen: " + s.getClass());
     }
 
-    // =====================================
+    // =============================
     // DECLARAÇÃO
-    // =====================================
+    // =============================
 
     @Override
     public void visit(VarDeclNode node) {
@@ -89,8 +84,8 @@ public class CodeGeneratorC implements CodeGenVisitor {
         String tipoC =
             node.getTipo() == TipoDado.INT ? "int" :
             node.getTipo() == TipoDado.REAL ? "double" :
-            node.getTipo() == TipoDado.BOOL ? "int" :  // bool → int
-            "char*";                                    // string
+            node.getTipo() == TipoDado.BOOL ? "int" :
+            "char*"; // string
 
         StringBuilder line = new StringBuilder(tipoC + " ");
 
@@ -105,9 +100,9 @@ public class CodeGeneratorC implements CodeGenVisitor {
         appendLine(line.toString());
     }
 
-    // =====================================
+    // =============================
     // ATRIBUIÇÃO
-    // =====================================
+    // =============================
 
     @Override
     public void visit(AssignNode node) {
@@ -115,15 +110,14 @@ public class CodeGeneratorC implements CodeGenVisitor {
         appendLine(node.getNome() + " = " + exprC + ";");
     }
 
-    // =====================================
+    // =============================
     // IF
-    // =====================================
+    // =============================
 
     @Override
     public void visit(IfNode node) {
 
         String condC = visit(node.getCondicao());
-
         openBlock("if (" + condC + ")");
         for (StmtNode s : node.getBlocoThen())
             visitStmt(s);
@@ -137,13 +131,12 @@ public class CodeGeneratorC implements CodeGenVisitor {
         }
     }
 
-    // =====================================
+    // =============================
     // WHILE
-    // =====================================
+    // =============================
 
     @Override
     public void visit(WhileNode node) {
-
         String condC = visit(node.getCondicao());
 
         openBlock("while (" + condC + ")");
@@ -152,9 +145,9 @@ public class CodeGeneratorC implements CodeGenVisitor {
         closeBlock();
     }
 
-    // =====================================
+    // =============================
     // FOR
-    // =====================================
+    // =============================
 
     @Override
     public void visit(ForNode node) {
@@ -169,44 +162,55 @@ public class CodeGeneratorC implements CodeGenVisitor {
         closeBlock();
     }
 
-    // =====================================
+    // =============================
     // READ
-    // =====================================
+    // =============================
 
     @Override
     public void visit(ReadNode node) {
-
-        String nome = node.getNome();
-        String fmt;
-
-        // Aqui usamos um truque: bool = int, string = char*
-        // O semantic já garantiu tipos válidos
-        // (Você pode estender isso)
-
-        fmt = "%d"; // padrão
-
-        appendLine("scanf(\"" + fmt + "\", &" + nome + ");");
+        appendLine("scanf(\"%d\", &" + node.getNome() + ");");
     }
 
-    // =====================================
-    // PRINT
-    // =====================================
+    // =============================
+    // PRINT (CORRIGIDO)
+    // =============================
 
     @Override
     public void visit(PrintNode node) {
 
         if (node.getLiteral() != null) {
             appendLine("printf(\"%s\\n\", \"" + node.getLiteral() + "\");");
+            return;
         }
+
+        ExprNode expr = node.getExpressao();
+        String exprC = visit(expr);
+
+        // int
+        if (expr instanceof IntLiteralNode || expr instanceof VarExprNode) {
+            appendLine("printf(\"%d\\n\", " + exprC + ");");
+        }
+        // real
+        else if (expr instanceof RealLiteralNode) {
+            appendLine("printf(\"%f\\n\", " + exprC + ");");
+        }
+        // bool → true/false
+        else if (expr instanceof BoolLiteralNode) {
+            appendLine("printf(\"%s\\n\", (" + exprC + " ? \"true\" : \"false\"));");
+        }
+        // strings
+        else if (expr instanceof StringLiteralExprNode) {
+            appendLine("printf(\"%s\\n\", " + exprC + ");");
+        }
+        // fallback (expressões aritméticas que podem virar real)
         else {
-            String exprC = visit(node.getExpressao());
             appendLine("printf(\"%f\\n\", " + exprC + ");");
         }
     }
 
-    // =====================================
+    // =============================
     // EXPRESSÕES
-    // =====================================
+    // =============================
 
     @Override
     public String visit(VarExprNode node) {
@@ -246,7 +250,6 @@ public class CodeGeneratorC implements CodeGenVisitor {
         String right = visit(node.getDireita());
         String op = node.getOperador();
 
-        // Lógica para operadores da linguagem → C
         switch (op) {
             case "and": op = "&&"; break;
             case "or": op = "||"; break;

@@ -28,6 +28,7 @@ public enum TipoToken {
     KW_PRINT,   // print
     KW_TRUE,    // true
     KW_FALSE,   // false
+    KW_BOOL,
 
     // --- Operadores aritméticos ---
     OP_SOMA,      // +
