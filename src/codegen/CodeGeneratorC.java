@@ -120,25 +120,41 @@ public class CodeGeneratorC implements CodeGenVisitor {
     @Override
     public void visit(VarDeclNode node) {
 
-        String tipoC =
-            node.getTipo() == TipoDado.INT ? "int" :
-            node.getTipo() == TipoDado.REAL ? "double" :
-            node.getTipo() == TipoDado.BOOL ? "int" :
-            "char*"; // string
+        if (node.getTipo() == TipoDado.INT ||
+            node.getTipo() == TipoDado.REAL ||
+            node.getTipo() == TipoDado.BOOL) {
 
-        StringBuilder line = new StringBuilder(tipoC + " ");
+            String tipoC =
+                node.getTipo() == TipoDado.INT ? "int" :
+                node.getTipo() == TipoDado.REAL ? "double" :
+                "int";
 
-        for (int i = 0; i < node.getNomes().size(); i++) {
-            line.append(node.getNomes().get(i));
-            if (i < node.getNomes().size() - 1)
-                line.append(", ");
+            StringBuilder line = new StringBuilder(tipoC + " ");
+
+            for (int i = 0; i < node.getNomes().size(); i++) {
+                line.append(node.getNomes().get(i));
+                if (i < node.getNomes().size() - 1)
+                    line.append(", ");
+            }
+
+            line.append(";");
+            appendLine(line.toString());
+            return;
         }
 
-        line.append(";");
+        if (node.getTipo() == TipoDado.STRING) {
 
-        appendLine(line.toString());
+            StringBuilder line = new StringBuilder();
+
+            for (int i = 0; i < node.getNomes().size(); i++) {
+                line.append("char* ").append(node.getNomes().get(i)).append(";");
+                appendLine(line.toString());
+                line.setLength(0); // limpa
+            }
+
+            return;
+        }
     }
-
 
     @Override
     public void visit(AssignNode node) {

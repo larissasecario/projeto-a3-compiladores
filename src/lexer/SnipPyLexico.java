@@ -140,6 +140,7 @@ public class SnipPyLexico {
             case "or": return new Token(TipoToken.OP_OR, lexema);
             case "not": return new Token(TipoToken.OP_NOT, lexema);
             case "bool": return new Token(TipoToken.KW_BOOL, lexema);
+            case "string": return new Token(TipoToken.KW_STRING, lexema);
         }
 
         return new Token(TipoToken.IDENTIFICADOR, lexema);

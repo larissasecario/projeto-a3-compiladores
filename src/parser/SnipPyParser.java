@@ -85,7 +85,8 @@ public class SnipPyParser {
 
             case KW_INT:
             case KW_REAL:
-            case KW_BOOL: {   // <-- ADICIONADO AQUI
+            case KW_BOOL: 
+            case KW_STRING: {
                 VarDeclNode decl = declaracaoVariavel();
                 casaToken(TipoToken.PONTO_VIRGULA);
                 return decl;
@@ -131,7 +132,7 @@ public class SnipPyParser {
         if (tokenAtual.getTipo() == TipoToken.KW_INT) {
             casaToken(TipoToken.KW_INT);
             return TipoDado.INT;
-        } 
+        }
         else if (tokenAtual.getTipo() == TipoToken.KW_REAL) {
             casaToken(TipoToken.KW_REAL);
             return TipoDado.REAL;
@@ -140,12 +141,14 @@ public class SnipPyParser {
             casaToken(TipoToken.KW_BOOL);
             return TipoDado.BOOL;
         }
-        else {
-            erroSintatico(TipoToken.KW_INT, tokenAtual);
-            return TipoDado.INVALIDO;
+        else if (tokenAtual.getTipo() == TipoToken.KW_STRING) {
+            casaToken(TipoToken.KW_STRING);
+            return TipoDado.STRING;
         }
-    }
 
+        erroSintatico("Tipo inválido: " + tokenAtual.getTipo());
+        return TipoDado.INVALIDO;
+    }
     private List<String> listaIdentificadores() {
         List<String> nomes = new ArrayList<>();
 
