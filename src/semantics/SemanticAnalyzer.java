@@ -227,13 +227,20 @@ public class SemanticAnalyzer implements NodeVisitor {
         }
 
         // OPERADORES ARITMÉTICOS
-        if (op.matches("\\+|-|\\*|/|%")) {
+        if (op.matches("\\+|-|\\*|/")) {
             if (!isNum(left) || !isNum(right))
                 erro("Operação '" + op + "' requer INT ou REAL.");
 
             if (left == TipoDado.REAL || right == TipoDado.REAL)
                 return TipoDado.REAL;
 
+            return TipoDado.INT;
+        }
+
+        // OPERADOR MOD (%)
+        if (op.equals("%")) {
+            if (left != TipoDado.INT || right != TipoDado.INT)
+                erro("Operador '%' só pode ser usado com INT.");
             return TipoDado.INT;
         }
 
