@@ -39,8 +39,8 @@ print("Ola, mundo!");
 // Detectar erros:
 
 // $v = 4 // Erro léxico: $ não faz parte dos TipoTokens
-//print("Ola, mundo!); // Erro léxico: string não fechada
+// print("Ola, mundo!); // Erro léxico: string não fechada
 
-//x = 10 // Erro sintático (gramática da linguagem): falta o ; na atribuição
+// x = 10 // Erro sintático (gramática da linguagem): falta o ; na atribuição
 
 // print(g); // Erro semântico (correto na gramática, mas sem sentido): usando a variável g, porém ela não foi declarada em nenhum lugar

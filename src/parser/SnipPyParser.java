@@ -20,10 +20,6 @@ public class SnipPyParser {
         this.tokenAtual = lexico.proximoToken();
     }
 
-    // ============================
-    //  UTILITÁRIOS DE ERRO / MATCH
-    // ============================
-
     private void erroSintatico(TipoToken esperado, Token encontrado) {
         throw new SyntaxError(
             "Esperado " + esperado +
@@ -44,11 +40,7 @@ public class SnipPyParser {
         }
     }
 
-    // ============================
-    //  ENTRADA PÚBLICA
-    // ============================
 
-    /** Ponto de entrada: usado no main */
     public ProgramNode parseProgram() {
         List<StmtNode> comandos = listaComandos();
 
@@ -62,9 +54,6 @@ public class SnipPyParser {
         return new ProgramNode(comandos);
     }
 
-    // ============================
-    //  LISTA DE COMANDOS / COMANDO
-    // ============================
 
     private List<StmtNode> listaComandos() {
         List<StmtNode> comandos = new ArrayList<>();
@@ -118,9 +107,6 @@ public class SnipPyParser {
         }
     }
 
-    // ============================
-    //  DECLARAÇÃO DE VARIÁVEIS
-    // ============================
 
     private VarDeclNode declaracaoVariavel() {
         TipoDado tipoVar = tipo();
@@ -173,9 +159,6 @@ public class SnipPyParser {
         return nomes;
     }
 
-    // ============================
-    //  ATRIBUIÇÃO
-    // ============================
 
     private AssignNode atribuicao() {
         String nome = tokenAtual.getLexema();
@@ -186,9 +169,6 @@ public class SnipPyParser {
         return new AssignNode(nome, expr);
     }
 
-    // ============================
-    //  EXPRESSÕES
-    // ============================
 
     private ExprNode expressao() {
         return expressaoLogica();

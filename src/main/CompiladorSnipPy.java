@@ -39,20 +39,14 @@ public class CompiladorSnipPy {
         System.out.println();
 
         try {
-            // -------------------------
-            // 1. LÉXICO
-            // -------------------------
+            // LÉXICO
             SnipPyLexico lexico = new SnipPyLexico(arquivo);
 
-            // -------------------------
-            // 2. PARSER → AST
-            // -------------------------
+            // PARSER → AST
             SnipPyParser parser = new SnipPyParser(lexico);
             ProgramNode ast = parser.parseProgram();
 
-            // -------------------------
-            // 3. ANÁLISE SEMÂNTICA
-            // -------------------------
+            // ANÁLISE SEMÂNTICA
             SemanticAnalyzer sem = new SemanticAnalyzer();
             sem.visit(ast);
 
@@ -60,9 +54,7 @@ public class CompiladorSnipPy {
             System.out.println(" ------ ANALISE SEMANTICA CONCLUIDA ------ ");
             System.out.println();
 
-            // -------------------------
-            // 4. GERADOR DE C
-            // -------------------------
+            // GERADOR DE C
             CodeGeneratorC gen = new CodeGeneratorC(sem.getTabela());
             String codigoC = gen.gerarCodigo(ast);
 

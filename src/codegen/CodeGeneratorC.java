@@ -12,11 +12,11 @@ public class CodeGeneratorC implements CodeGenVisitor {
     private StringBuilder sb = new StringBuilder();
     private int indent = 0;
     private TabelaSimbolos tabela;
-    
-     public CodeGeneratorC(TabelaSimbolos tabela) {
+
+    public CodeGeneratorC(TabelaSimbolos tabela) {
         this.tabela = tabela;
     }
-    
+
     private void appendLine(String line) {
         sb.append("    ".repeat(indent)).append(line).append("\n");
     }
@@ -32,7 +32,8 @@ public class CodeGeneratorC implements CodeGenVisitor {
     }
 
     public String gerarCodigo(ProgramNode node) {
-        sb.append("#include <stdio.h>\n\n");
+        sb.append("#include <stdio.h>\n");
+        sb.append("#include <string.h>\n\n");
         sb.append("int main() {\n");
         indent++;
 
@@ -75,7 +76,7 @@ public class CodeGeneratorC implements CodeGenVisitor {
         else if (s instanceof PrintNode) visit((PrintNode) s);
         else throw new RuntimeException("Nó desconhecido no codegen: " + s.getClass());
     }
-    
+
     private TipoDado tipoExpr(ExprNode node) {
         if (node instanceof IntLiteralNode) return TipoDado.INT;
         if (node instanceof RealLiteralNode) return TipoDado.REAL;
@@ -97,15 +98,15 @@ public class CodeGeneratorC implements CodeGenVisitor {
         if (node instanceof BinaryExprNode) {
             BinaryExprNode b = (BinaryExprNode) node;
 
-            // operadores lógicos
+            // Operadores lógicos
             if (b.getOperador().equals("and") || b.getOperador().equals("or"))
                 return TipoDado.BOOL;
 
-            // operadores relacionais
+            // Operadores relacionais
             if (b.getOperador().matches("==|!=|<|<=|>|>="))
                 return TipoDado.BOOL;
 
-            // operadores aritméticos
+            // Operadores aritméticos
             TipoDado t1 = tipoExpr(b.getEsquerda());
             TipoDado t2 = tipoExpr(b.getDireita());
             if (t1 == TipoDado.REAL || t2 == TipoDado.REAL)
@@ -120,40 +121,29 @@ public class CodeGeneratorC implements CodeGenVisitor {
     @Override
     public void visit(VarDeclNode node) {
 
-        if (node.getTipo() == TipoDado.INT ||
-            node.getTipo() == TipoDado.REAL ||
-            node.getTipo() == TipoDado.BOOL) {
-
-            String tipoC =
-                node.getTipo() == TipoDado.INT ? "int" :
-                node.getTipo() == TipoDado.REAL ? "double" :
-                "int";
-
-            StringBuilder line = new StringBuilder(tipoC + " ");
-
-            for (int i = 0; i < node.getNomes().size(); i++) {
-                line.append(node.getNomes().get(i));
-                if (i < node.getNomes().size() - 1)
-                    line.append(", ");
-            }
-
-            line.append(";");
-            appendLine(line.toString());
-            return;
+        String tipoC = "";
+        switch (node.getTipo()) {
+            case INT: tipoC = "int"; break;
+            case REAL: tipoC = "double"; break;
+            case BOOL: tipoC = "int"; break;
         }
 
         if (node.getTipo() == TipoDado.STRING) {
-
-            StringBuilder line = new StringBuilder();
-
-            for (int i = 0; i < node.getNomes().size(); i++) {
-                line.append("char* ").append(node.getNomes().get(i)).append(";");
-                appendLine(line.toString());
-                line.setLength(0); // limpa
+            for (String nome : node.getNomes()) {
+                appendLine("char " + nome + "[256];");
             }
-
             return;
         }
+
+        StringBuilder line = new StringBuilder(tipoC + " ");
+        for (int i = 0; i < node.getNomes().size(); i++) {
+            line.append(node.getNomes().get(i));
+            if (i < node.getNomes().size() - 1)
+                line.append(", ");
+        }
+
+        line.append(";");
+        appendLine(line.toString());
     }
 
     @Override
@@ -162,10 +152,11 @@ public class CodeGeneratorC implements CodeGenVisitor {
         appendLine(node.getNome() + " = " + exprC + ";");
     }
 
+
     @Override
     public void visit(IfNode node) {
-
         String condC = visit(node.getCondicao());
+
         openBlock("if (" + condC + ")");
         for (StmtNode s : node.getBlocoThen())
             visitStmt(s);
@@ -204,13 +195,33 @@ public class CodeGeneratorC implements CodeGenVisitor {
         closeBlock();
     }
 
-
+  
     @Override
     public void visit(ReadNode node) {
-        appendLine("scanf(\"%d\", &" + node.getNome() + ");");
+        TipoDado tipo = tabela.buscar(node.getNome()).getTipo();
+
+        switch (tipo) {
+
+            case STRING:
+                appendLine("fgets(" + node.getNome() + ", 256, stdin);");
+                appendLine(node.getNome() + "[strcspn(" + node.getNome() + ", \"\\n\")] = 0;");
+                break;
+
+            case INT:
+                appendLine("scanf(\"%d\", &" + node.getNome() + ");");
+                break;
+
+            case REAL:
+                appendLine("scanf(\"%lf\", &" + node.getNome() + ");");
+                break;
+
+            case BOOL:
+                appendLine("scanf(\"%d\", &" + node.getNome() + ");");
+                break;
+        }
     }
 
-
+  
     @Override
     public void visit(PrintNode node) {
 
@@ -224,7 +235,6 @@ public class CodeGeneratorC implements CodeGenVisitor {
         TipoDado tipo = tipoExpr(expr);
 
         switch (tipo) {
-
             case INT:
                 appendLine("printf(\"%d\\n\", " + exprC + ");");
                 break;
@@ -243,7 +253,7 @@ public class CodeGeneratorC implements CodeGenVisitor {
         }
     }
 
-
+    
     @Override
     public String visit(VarExprNode node) {
         return node.getNome();
@@ -279,7 +289,6 @@ public class CodeGeneratorC implements CodeGenVisitor {
 
     @Override
     public String visit(BinaryExprNode node) {
-
         String left = visit(node.getEsquerda());
         String right = visit(node.getDireita());
         String op = node.getOperador();
@@ -291,6 +300,4 @@ public class CodeGeneratorC implements CodeGenVisitor {
 
         return "(" + left + " " + op + " " + right + ")";
     }
-    
-    
 }

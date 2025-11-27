@@ -3,9 +3,43 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/main/CompiladorSnipPy.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/data/programa.spy</file>
             <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/codegen/CodeGeneratorC.java</file>
-            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/data/programa.snip</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/lexer/SnipPyLexico.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/lexer/LeitorArquivosTexto.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/AssignNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/BinaryExprNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/BoolLiteralNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/ExprNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/ForNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/IfNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/IntLiteralNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/Node.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/NodeVisitor.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/ProgramNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/PrintNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/ReadNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/RealLiteralNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/StmtNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/StringLiteralExprNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/UnaryExprNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/VarDeclNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/WhileNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/ast/VarExprNode.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/codegen/CodeGenVisitor.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/errors/CompilerException.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/errors/LexicalError.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/errors/SemanticError.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/errors/SyntaxError.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/lexer/TipoToken.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/lexer/Token.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/main/CompiladorSnipPy.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/parser/SnipPyParser.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/semantics/SemanticAnalyzer.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/semantics/Simbolo.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/semantics/TabelaSimbolos.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/semantics/TipoDado.java</file>
+            <file>file:/C:/Users/laris/OneDrive/Documents/NetBeansProjects/projeto-a3-compiladores/CompiladorSnipPy/src/docs/manual_usuario.md</file>
         </group>
     </open-files>
 </project-private>
